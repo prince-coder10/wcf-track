@@ -1,4 +1,4 @@
-import webpush from "web-push";
+import * as webpush from "web-push";
 import { connectDB } from "@/lib/mongodb";
 import { PushSubscription } from "@/models/PushSubscription";
 import { Notification, NotificationPriority, NotificationType } from "@/models/Notification";

@@ -4,7 +4,6 @@ import Person from "@/models/Person";
 import { sendNotificationToUser } from "@/services/push.service";
 import mongoose from "mongoose";
 
-export const dynamic = "force-dynamic";
 
 /**
  * Daily Morning (9:00 AM) Cron Endpoint

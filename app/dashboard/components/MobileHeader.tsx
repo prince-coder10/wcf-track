@@ -5,8 +5,18 @@ import Image from "next/image";
 import Link from "next/link";
 import NotificationBell from "@/app/components/NotificationBell";
 import LogoutButton from "@/app/components/LogoutButton";
+import { RotateCw } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 export default function MobileHeader() {
+  const router = useRouter();
+  const [isRefreshing, setIsRefreshing] = React.useState(false);
+
+  const handleManualRefresh = () => {
+    setIsRefreshing(true);
+    router.refresh();
+    setTimeout(() => setIsRefreshing(false), 800);
+  };
   return (
     <header className="md:hidden sticky top-0 z-40 bg-white/95 backdrop-blur border-b border-gray-100 px-4 py-3 flex items-center justify-between">
       <Link href="/dashboard" className="flex items-center gap-2.5">
@@ -30,6 +40,14 @@ export default function MobileHeader() {
       </Link>
 
       <div className="flex items-center gap-1">
+        <button
+          onClick={handleManualRefresh}
+          className="p-2 rounded-xl text-gray-500 hover:text-blue-600 active:bg-blue-50 hover:bg-gray-100 transition-colors"
+          aria-label="Refresh page"
+          title="Refresh"
+        >
+          <RotateCw className={`w-4 h-4 ${isRefreshing ? "animate-spin text-blue-600" : ""}`} />
+        </button>
         <NotificationBell align="right" />
         <LogoutButton variant="mobile" />
       </div>

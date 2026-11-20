@@ -6,16 +6,13 @@ import Link from "next/link";
 import NotificationBell from "@/app/components/NotificationBell";
 import LogoutButton from "@/app/components/LogoutButton";
 import { RotateCw } from "lucide-react";
-import { useRouter } from "next/navigation";
 
 export default function MobileHeader() {
-  const router = useRouter();
   const [isRefreshing, setIsRefreshing] = React.useState(false);
 
   const handleManualRefresh = () => {
     setIsRefreshing(true);
-    router.refresh();
-    setTimeout(() => setIsRefreshing(false), 800);
+    window.location.reload();
   };
   return (
     <header className="md:hidden sticky top-0 z-40 bg-white/95 backdrop-blur border-b border-gray-100 px-4 py-3 flex items-center justify-between">

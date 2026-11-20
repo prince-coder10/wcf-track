@@ -1,11 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import { RotateCw } from "lucide-react";
 
 export default function PullToRefresh() {
-  const router = useRouter();
   const [startY, setStartY] = useState(0);
   const [pullDistance, setPullDistance] = useState(0);
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -47,14 +45,8 @@ export default function PullToRefresh() {
         setIsRefreshing(true);
         setPullDistance(50); // Keep indicator visible during refresh
 
-        // Refresh Next.js server components and client state
-        router.refresh();
-
-        setTimeout(() => {
-          setIsRefreshing(false);
-          setPullDistance(0);
-          setStartY(0);
-        }, 800);
+        // Full browser reload to bypass client-side caches and fetch completely fresh data
+        window.location.reload();
       } else {
         setPullDistance(0);
         setStartY(0);
@@ -70,7 +62,7 @@ export default function PullToRefresh() {
       window.removeEventListener("touchmove", handleTouchMove);
       window.removeEventListener("touchend", handleTouchEnd);
     };
-  }, [startY, pullDistance, isRefreshing, router]);
+  }, [startY, pullDistance, isRefreshing]);
 
   if (pullDistance === 0 && !isRefreshing) return null;
 

@@ -8,7 +8,8 @@ import { Types } from "mongoose";
 export async function POST(req: NextRequest) {
   try {
     const session = await getSession();
-    if (!session) {
+    console.log("this is user session", session)
+    if (!session || !session.sub) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -30,7 +31,7 @@ export async function POST(req: NextRequest) {
     await PushSubscription.findOneAndUpdate(
       { endpoint },
       {
-        user: new Types.ObjectId(session.userId as string),
+        user: new Types.ObjectId(session.sub),
         endpoint,
         keys: {
           p256dh: keys.p256dh,
@@ -54,7 +55,7 @@ export async function POST(req: NextRequest) {
 export async function DELETE(req: NextRequest) {
   try {
     const session = await getSession();
-    if (!session) {
+    if (!session || !session.sub) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -66,7 +67,7 @@ export async function DELETE(req: NextRequest) {
     await connectDB();
     await PushSubscription.findOneAndDelete({
       endpoint,
-      user: new Types.ObjectId(session.userId as string),
+      user: new Types.ObjectId(session.sub),
     });
 
     return NextResponse.json({ success: true, message: "Subscription removed" });

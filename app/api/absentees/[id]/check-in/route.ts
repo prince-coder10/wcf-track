@@ -5,6 +5,7 @@ import FellowshipMember, { ABSENTEE_STATUSES } from "@/models/FellowshipMember";
 import { assertActiveUser } from "@/services/people.service";
 import { canUserViewAbsentee } from "@/services/absentee.service";
 import { logActivity } from "@/services/activity.service";
+import { sendNotificationToUser } from "@/services/push.service";
 import { z } from "zod";
 import { Types } from "mongoose";
 
@@ -80,6 +81,28 @@ export async function POST(
     details: `${method.toUpperCase()}, ${reached ? "reached" : "no answer"}${status ? ` (${status})` : ""}`,
     metadata: { method, reached, notes },
   });
+
+  // Send in-app notification for the check-in
+  void sendNotificationToUser({
+    userId: String(caller._id),
+    title: "Absentee Check-in Logged",
+    message: `${member.fullName} — ${method.toUpperCase()}, ${reached ? "reached" : "no answer"}`,
+    type: "system",
+    priority: "in_app",
+    link: `/dashboard/absentees`,
+  });
+
+  // If assigned to someone else, notify them too
+  if (member.assignedTo && String(member.assignedTo) !== String(caller._id)) {
+    void sendNotificationToUser({
+      userId: String(member.assignedTo),
+      title: "Check-in on Your Assigned Absentee",
+      message: `${caller.fullName} logged a check-in for ${member.fullName}`,
+      type: "system",
+      priority: "in_app",
+      link: `/dashboard/absentees`,
+    });
+  }
 
   return NextResponse.json({
     ok: true,

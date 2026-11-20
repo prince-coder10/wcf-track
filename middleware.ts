@@ -30,7 +30,10 @@ export async function middleware(req: NextRequest) {
   if (
     pathname.startsWith("/_next") ||
     pathname.startsWith("/favicon") ||
-    pathname.match(/\.(ico|png|jpg|jpeg|svg|webp|gif|css|js|woff2?)$/)
+    pathname === "/manifest.json" ||
+    pathname === "/sw.js" ||
+    pathname.startsWith("/logos/") ||
+    pathname.match(/\.(ico|png|jpg|jpeg|svg|webp|gif|css|js|woff2?|json)$/)
   ) {
     return NextResponse.next();
   }

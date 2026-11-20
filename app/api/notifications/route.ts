@@ -9,12 +9,12 @@ import { Types } from "mongoose";
 export async function GET() {
   try {
     const session = await getSession();
-    if (!session || !session.userId) {
+    if (!session || !session.sub) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     await connectDB();
-    const userObjectId = new Types.ObjectId(session.userId as string);
+    const userObjectId = new Types.ObjectId(session.sub);
 
     const notifications = await Notification.find({ user: userObjectId })
       .sort({ createdAt: -1 })
@@ -42,14 +42,15 @@ export async function GET() {
 export async function PATCH(req: NextRequest) {
   try {
     const session = await getSession();
-    if (!session || !session.userId) {
+    console.log('session', session)
+    if (!session || !session.sub) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const { notificationIds, markAll } = await req.json();
 
     await connectDB();
-    const userObjectId = new Types.ObjectId(session.userId as string);
+    const userObjectId = new Types.ObjectId(session.sub);
 
     if (markAll) {
       await Notification.updateMany(

@@ -3,6 +3,7 @@ import Person, { IPerson } from "@/models/Person";
 import CheckIn, { ICheckIn } from "@/models/CheckIn";
 import User from "@/models/User";
 import { PersonStatus } from "@/lib/status";
+import { sendNotificationToUser } from "@/services/push.service";
 import { Role, roleHasPermission, PERMISSION_ACTIONS } from "@/lib/permissions";
 import { logActivity } from "@/services/activity.service";
 
@@ -172,6 +173,28 @@ export async function logCheckIn(input: LogCheckInInput): Promise<ICheckIn> {
       newStatus: targetStatus,
     },
   });
+
+  // 4. Send in-app notification to the user who logged the check-in (confirmation)
+  void sendNotificationToUser({
+    userId,
+    title: "Check-in Logged",
+    message: `${person.fullName} — ${details}`,
+    type: "system",
+    priority: "in_app",
+    link: `/dashboard/people/${String(person._id)}`,
+  });
+
+  // 5. If the person has an assignedTo that is different from the caller, notify them too
+  if (person.assignedTo && String(person.assignedTo) !== userId) {
+    void sendNotificationToUser({
+      userId: String(person.assignedTo),
+      title: "Check-in on Your Assigned Person",
+      message: `${userName} logged a check-in for ${person.fullName}`,
+      type: "system",
+      priority: "in_app",
+      link: `/dashboard/people/${String(person._id)}`,
+    });
+  }
 
   return checkIn;
 }

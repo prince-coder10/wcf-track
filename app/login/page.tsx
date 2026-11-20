@@ -4,11 +4,10 @@ import { Suspense } from "react";
 
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 
 function LoginForm() {
-  const router = useRouter();
   const searchParams = useSearchParams();
 
   const [login, setLogin] = useState("");
@@ -35,10 +34,10 @@ function LoginForm() {
         return;
       }
 
-      // Redirect to the page the user originally tried to visit, or role's landing route
-      const fallback = data.redirect || "/dashboard";
-      const from = searchParams.get("from") ?? fallback;
-      router.replace(from);
+      // Always redirect to /dashboard upon login (or explicit valid return path if present)
+      const from = searchParams.get("from");
+      const target = from && from !== "/login" && from !== "/" ? from : "/dashboard";
+      window.location.href = target;
     } catch {
       setError("Network error. Please check your connection and try again.");
     } finally {

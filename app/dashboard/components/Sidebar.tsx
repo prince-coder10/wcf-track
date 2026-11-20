@@ -9,10 +9,10 @@ import {
   UserCog,
   ClipboardList,
   UserX,
-  LogOut,
 } from "lucide-react";
 import { Role, roleHasPermission, PERMISSION_ACTIONS } from "@/lib/permissions";
 import NotificationBell from "@/app/components/NotificationBell";
+import LogoutButton from "@/app/components/LogoutButton";
 
 interface NavItem {
   label: string;
@@ -114,16 +114,8 @@ export default function Sidebar({ userRole }: { userRole?: Role }) {
       </nav>
 
       {/* Logout */}
-      <div className="px-3 pb-5">
-        <form action="/api/auth/logout" method="POST">
-          <button
-            type="submit"
-            className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-sm text-gray-400 hover:bg-red-50 hover:text-red-600 transition-colors"
-          >
-            <LogOut size={16} strokeWidth={1.8} />
-            Sign out
-          </button>
-        </form>
+      <div className="px-3 pb-5 border-t border-gray-100 pt-3">
+        <LogoutButton variant="desktop" />
       </div>
     </aside>
   );

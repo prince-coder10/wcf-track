@@ -4,6 +4,7 @@ import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import NotificationBell from "@/app/components/NotificationBell";
+import LogoutButton from "@/app/components/LogoutButton";
 
 export default function MobileHeader() {
   return (
@@ -28,8 +29,9 @@ export default function MobileHeader() {
         </div>
       </Link>
 
-      <div className="flex items-center">
+      <div className="flex items-center gap-1">
         <NotificationBell align="right" />
+        <LogoutButton variant="mobile" />
       </div>
     </header>
   );
